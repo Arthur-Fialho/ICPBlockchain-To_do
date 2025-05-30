@@ -3,9 +3,13 @@ import { to_do_backend } from 'declarations/to_do_backend';
 
 function tarefas() {
   const [tarefas, setTarefas] = useState([]);
+  const [totalEmAndamento, setTotalEmAndamento] = useState(0);
+  const [totalConcluidas, setTotalConcluidas] = useState(0);
 
   useEffect(() => {
     consultarTarefas();
+    totalTarefasEmAndamento();
+    totalTarefasConcluidas();
   }, []);
   
   async function consultarTarefas(){
@@ -29,7 +33,9 @@ function tarefas() {
         await to_do_backend.alterarTarefa( parseInt(idTarefa), categoria, descricao, urgente, false );    
     }
     
-    consultarTarefas();    
+    consultarTarefas();
+    totalTarefasEmAndamento();
+    totalTarefasConcluidas();  
 
     event.target.elements.idTarefa.value = "";
     event.target.elements.categoria.value = "";
@@ -41,11 +47,15 @@ function tarefas() {
   async function excluir(id) {        
     await to_do_backend.excluirTarefa( parseInt(id));    
     consultarTarefas();
+    totalTarefasEmAndamento();
+    totalTarefasConcluidas();
   }
 
   async function alterar( id, categoria, descricao, urgente, concluida) {      
     await to_do_backend.alterarTarefa( parseInt(id), categoria, descricao, urgente, concluida );    
-    consultarTarefas();    
+    consultarTarefas();
+    totalTarefasConcluidas();
+    totalTarefasEmAndamento();
   }
 
   async function editar( id, categoria, descricao, urgente ) {              
@@ -55,6 +65,15 @@ function tarefas() {
         document.getElementById('formTarefas').elements['urgente'].value = urgente; 
   }
 
+    async function totalTarefasEmAndamento() {
+        const total = await to_do_backend.totalTarefasEmAndamento();
+        setTotalEmAndamento(parseInt(total));
+    }
+
+    async function totalTarefasConcluidas() {
+        const total = await to_do_backend.totalTarefasConcluidas();
+        setTotalConcluidas(parseInt(total));
+    }
 
   return (
 
@@ -155,7 +174,9 @@ function tarefas() {
                     </ul>
             </div>
         </div>
-
+        <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded shadow">
+            <strong>Tarefas em andamento:</strong> {totalEmAndamento}
+        </div>
         <br/>
 
         <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-8 dark:bg-gray-800 dark:border-gray-700">
@@ -197,6 +218,9 @@ function tarefas() {
                         
                     </ul>
             </div>
+        </div>
+        <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded shadow">
+            <strong>Tarefas Concluidas:</strong> {totalConcluidas}
         </div>
 
     </main>

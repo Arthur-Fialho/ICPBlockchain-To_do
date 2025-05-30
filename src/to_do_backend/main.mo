@@ -65,4 +65,30 @@ actor {
   public func getTarefas() : async [Tarefa] {
     return Buffer.toArray(tarefas);
   };
+
+  // Função para armazenar o total de tarefas em andamento
+  public func totalTarefasEmAndamento() : async Nat {
+    var total : Nat = 0;
+
+    for(tarefa in tarefas.vals()){
+      if(tarefa.concluida == false){
+        total += 1;
+      }
+    };
+
+    return total;
+  };
+
+  // Função para armazenar o total de tarefas concluidas
+  public func totalTarefasConcluidas() : async Nat {
+    var total : Nat = 0;
+
+    for(tarefa in tarefas.vals()){
+      if(tarefa.concluida == true){
+        total += 1;
+      }
+    };
+
+    return total;
+  };
 };
